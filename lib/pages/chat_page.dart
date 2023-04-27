@@ -20,6 +20,11 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   TextEditingController? messageController;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void _sendMessage({String? message, XFile? imageFile}) async {
     String? imageURL;
     Map<String, dynamic> msgData = {};
@@ -51,61 +56,43 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 2,
+        title: const Text('Chat'),
       ),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          case ConnectionState.active:
-          case ConnectionState.done:
-            return Scaffold(
-              appBar: AppBar(
-                elevation: 2,
-                title: const Text('Chat'),
-              ),
-              body: Column(
-                children: [
-                  Expanded(
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('messages')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done ||
-                            snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else {
-                          List<QueryDocumentSnapshot> docsList =
-                              snapshot.data!.docs.reversed.toList();
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('messages').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done ||
+                    snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  List<QueryDocumentSnapshot> docsList =
+                      snapshot.data!.docs.reversed.toList();
 
-                          return ListView.builder(
-                            itemCount: docsList.length,
-                            reverse: true,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(docsList[index].get('message')),
-                              );
-                            },
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  TextComposer(sendMessage: _sendMessage),
-                ],
-              ),
-            );
-        }
-      },
+                  return ListView.builder(
+                    itemCount: docsList.length,
+                    reverse: true,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(docsList[index].get('message')),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+          TextComposer(sendMessage: _sendMessage),
+        ],
+      ),
     );
   }
 }

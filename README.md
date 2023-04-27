@@ -2,12 +2,12 @@
 
 Dependencies:
 
-    - cloud_firestore: ^4.5.2
-    - image_picker: ^0.8.7+4
-    - google_sign_in: ^6.1.0
-    - firebase_storage: ^11.1.1
-    - firebase_auth: ^4.4.2 - (https://pub.dev/packages/firebase_auth)
-    - firebase_core: ^2.10.0
+    - [cloud_firestore](https://pub.dev/packages/cloud_firestore): ^4.5.2
+    - [image_picker](https://pub.dev/packages/image_picker): ^0.8.7+4
+    - [google_sign_in](https://pub.dev/packages/google_sign_in): ^6.1.0
+    - [firebase_storage](https://pub.dev/packages/firebase_storage): ^11.1.1
+    - [firebase_auth](https://pub.dev/packages/firebase_auth): ^4.4.2
+    - [firebase_core](https://pub.dev/packages/firebase_core): ^2.10.0
 
 ## Farebase notes:
 
