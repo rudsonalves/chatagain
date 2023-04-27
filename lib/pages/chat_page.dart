@@ -59,6 +59,11 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void _sendMessage({String? message, XFile? imageFile}) async {
     final User? user = await _getUser();
 
