@@ -1,9 +1,8 @@
-import 'package:chatagain/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 // import 'package:firebase_core/firebase_core.dart';
-// import './firebase_options.dart';
+import './firebase_options.dart';
 
 import './pages/chat_page.dart';
 import './themes/color_schemes.g.dart';
