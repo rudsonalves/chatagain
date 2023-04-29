@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       themeMode: ThemeMode.system,
       theme: ThemeData(
+        // colorSchemeSeed: Colors.amber,
         appBarTheme: const AppBarTheme(
           centerTitle: true,
           // backgroundColor: lightColorScheme.,

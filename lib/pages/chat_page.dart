@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../components/chat_message.dart';
 import '../components/text_composer.dart';
+import '../models/message_data.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -108,7 +110,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
+        elevation: 1,
         title: const Text('Chat'),
       ),
       body: Column(
@@ -131,9 +133,9 @@ class _ChatPageState extends State<ChatPage> {
                     itemCount: docsList.length,
                     reverse: true,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(docsList[index].get('message')),
-                      );
+                      MessageData msgData = MessageData.fromMap(
+                          docsList[index].data() as Map<String, dynamic>);
+                      return ChatMessage(msgData);
                     },
                   );
                 }
