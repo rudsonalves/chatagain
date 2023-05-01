@@ -16,9 +16,9 @@ class ChatMessage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
-          width: 280,
+          width: 350,
           child: Card(
-            elevation: 1,
+            elevation: 5,
             margin: const EdgeInsets.all(10),
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
@@ -33,7 +33,9 @@ class ChatMessage extends StatelessWidget {
                 backgroundImage: NetworkImage(messageData.senderPhotoUrl),
               ),
               title: Text(messageData.senderName),
-              subtitle: Text(messageData.message),
+              subtitle: messageData.message != null
+                  ? Text(messageData.message ?? 'Null')
+                  : Image.network(messageData.imageUrl!),
             ),
           ),
         ),

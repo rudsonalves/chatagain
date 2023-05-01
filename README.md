@@ -47,7 +47,7 @@ Listen for state changes, errors, and completion of the upload.
 https://firebase.google.com/docs/storage/flutter/upload-files?authuser=0
 
 ```
-String imageURL = '';
+String imageUrl = '';
 var snapshot = await task.snapshotEvents.listen(
     (TaskSnapshot taskSnapshot) async {
         switch (taskSnapshot.state) {
@@ -58,8 +58,8 @@ var snapshot = await task.snapshotEvents.listen(
             break;
             case TaskState.success:
             log('Handle successful uploads on complete');
-            imageURL = await task.snapshot.ref.getDownloadURL();
-            log('ImageURL: >>>$imageURL<<<');
+            imageUrl = await task.snapshot.ref.getDownloadURL();
+            log('ImageUrl: >>>$imageUrl<<<');
             break;
             case TaskState.paused:
             log("Upload is paused.");

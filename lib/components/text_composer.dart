@@ -46,7 +46,6 @@ class _TextComposerState extends State<TextComposer> {
               if (photo == null) return;
 
               widget.sendMessage(imageFile: photo);
-              // log('${photo.path.toString()}');
             },
           ),
           Expanded(

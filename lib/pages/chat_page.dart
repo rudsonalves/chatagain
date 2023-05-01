@@ -74,18 +74,19 @@ class _ChatPageState extends State<ChatPage> {
       return;
     }
 
-    Map<String, dynamic> data = {
-      'uid': user.uid,
-      'senderName': user.displayName,
-      'senderPhotoUrl': user.photoURL,
-    };
+    MessageData messageData = MessageData(
+      uid: user.uid,
+      senderName: user.displayName!,
+      senderPhotoUrl: user.photoURL!,
+      date: DateTime.now().toIso8601String(),
+    );
 
     if (message != null) {
-      data['message'] = message;
+      messageData.message = message;
     }
 
     if (imageFile != null) {
-      String? imageURL;
+      String? imageUrl;
       UploadTask uploadTask = FirebaseStorage.instance
           .ref()
           .child(DateTime.now().microsecondsSinceEpoch.toString())
@@ -93,16 +94,18 @@ class _ChatPageState extends State<ChatPage> {
 
       await uploadTask.whenComplete(
         () async {
-          imageURL = await uploadTask.snapshot.ref.getDownloadURL();
+          imageUrl = await uploadTask.snapshot.ref.getDownloadURL();
         },
       );
 
-      data['imageURL'] = imageURL;
+      messageData.imageUrl = imageUrl;
     }
 
-    if (data.isNotEmpty) {
+    if ((messageData.message != null && messageData.message!.isNotEmpty) ||
+        messageData.imageUrl != null) {
+      // log('write message: $messageData');
       FirebaseFirestore firebase = FirebaseFirestore.instance;
-      firebase.collection('messages').add(data);
+      firebase.collection('messages').add(messageData.toMap);
     }
   }
 
@@ -117,8 +120,10 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('messages').snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection('messages')
+                  .orderBy('date')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done ||
                     snapshot.connectionState == ConnectionState.waiting) {
