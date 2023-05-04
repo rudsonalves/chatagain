@@ -23,10 +23,10 @@ class ChatMessage extends StatelessWidget {
         SizedBox(
           width: 300,
           child: Card(
-            color: isFromUser
+            color: !isFromUser
                 ? Theme.of(context).colorScheme.onPrimary
                 : Theme.of(context).colorScheme.outlineVariant,
-            elevation: 5,
+            elevation: 2,
             margin: const EdgeInsets.all(10),
             shape: isFromUser
                 ? const RoundedRectangleBorder(
