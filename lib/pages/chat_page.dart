@@ -1,11 +1,9 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -24,34 +22,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   TextEditingController? messageController;
   final GoogleAuthService _googleAuthService = GoogleAuthService();
-  User? _currentUser;
-
-  // Future<User?> _getUser() async {
-  //   if (_currentUser != null) return _currentUser;
-
-  //   try {
-  //     final GoogleSignInAccount? googleSignInAccount =
-  //         await googleSignIn.signIn();
-
-  //     if (googleSignInAccount != null) {
-  //       GoogleSignInAuthentication googleSignInAuthentication =
-  //           await googleSignInAccount.authentication;
-
-  //       final AuthCredential credential = GoogleAuthProvider.credential(
-  //         idToken: googleSignInAuthentication.idToken,
-  //         accessToken: googleSignInAuthentication.accessToken,
-  //       );
-
-  //       final UserCredential authResult =
-  //           await FirebaseAuth.instance.signInWithCredential(credential);
-
-  //       return authResult.user;
-  //     }
-  //   } catch (error) {
-  //     log('ERROR: ${error.toString()}');
-  //     return null;
-  //   }
-  // }
+  User? _user;
 
   void _showUnableLogin() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -71,10 +42,12 @@ class _ChatPageState extends State<ChatPage> {
       return;
     }
 
+    _user = user;
+
     MessageData messageData = MessageData(
-      uid: user.uid,
-      senderName: user.displayName!,
-      senderPhotoUrl: user.photoURL!,
+      uid: _user!.uid,
+      senderName: _user!.displayName!,
+      senderPhotoUrl: _user!.photoURL!,
       date: DateTime.now().toIso8601String(),
     );
 
@@ -109,7 +82,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _googleAuthService.getUser(),
+      future: _googleAuthService.getUser().then((user) => _user = user),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
@@ -143,7 +116,8 @@ class _ChatPageState extends State<ChatPage> {
                                 docsList[index].data() as Map<String, dynamic>);
                             return ChatMessage(
                               messageData: msgData,
-                              userId: _currentUser?.uid ?? '',
+                              userId: _user?.uid ?? '',
+
                             );
                           },
                         );
