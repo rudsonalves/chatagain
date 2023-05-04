@@ -48,10 +48,13 @@ class ChatMessage extends StatelessWidget {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: NetworkImage(messageData.senderPhotoUrl),
-
               ),
+              title: Text(messageData.senderName),
+              subtitle: messageData.message != null
+                  ? Text(messageData.message ?? 'Null')
+                  : Image.network(messageData.imageUrl!),
             ),
-          ],
+          ),
         ),
       ],
     );

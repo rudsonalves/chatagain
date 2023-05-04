@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 import '../components/chat_message.dart';
 import '../components/text_composer.dart';
@@ -117,7 +116,6 @@ class _ChatPageState extends State<ChatPage> {
                             return ChatMessage(
                               messageData: msgData,
                               userId: _user?.uid ?? '',
-
                             );
                           },
                         );
