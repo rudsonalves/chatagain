@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'dart:developer';
-
 import 'package:image_picker/image_picker.dart';
 
 class TextComposer extends StatefulWidget {
@@ -30,8 +28,9 @@ class _TextComposerState extends State<TextComposer> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+    return Container(
+      // TODO: corrigir está cor!!!!
+      color: Theme.of(context).focusColor,
       child: Row(
         children: [
           IconButton(

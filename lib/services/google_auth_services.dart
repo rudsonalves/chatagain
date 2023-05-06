@@ -42,4 +42,12 @@ class GoogleAuthService {
     }
     return null;
   }
+
+  void signOut() {
+    _googleSignIn.signOut();
+  }
+
+  void signIn() {
+    _googleSignIn.signIn();
+  }
 }
