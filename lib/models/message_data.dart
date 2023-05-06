@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class MessageData {
   String uid;
-  String date;
+  Timestamp date;
   String senderName;
   String senderPhotoUrl;
   String? message;
@@ -18,7 +20,7 @@ class MessageData {
   static MessageData fromMap(Map<String, dynamic> messageMap) {
     MessageData msgData = MessageData(
       uid: messageMap['uid'] as String,
-      date: messageMap['date'] as String,
+      date: messageMap['date'] as Timestamp,
       senderName: messageMap['senderName'] as String,
       senderPhotoUrl: messageMap['senderPhotoUrl'] as String,
     );

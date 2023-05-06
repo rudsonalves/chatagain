@@ -14,6 +14,8 @@ import '../services/google_auth_services.dart';
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
 
+  static const routeName = '/';
+
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
@@ -22,6 +24,7 @@ class _ChatPageState extends State<ChatPage> {
   TextEditingController? messageController;
   final GoogleAuthService _googleAuthService = GoogleAuthService();
   User? _user;
+  bool _isSending = false;
 
   void _showUnableLogin() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -41,13 +44,17 @@ class _ChatPageState extends State<ChatPage> {
       return;
     }
 
+    setState(() {
+      _isSending = true;
+    });
+
     _user = user;
 
     MessageData messageData = MessageData(
       uid: _user!.uid,
       senderName: _user!.displayName!,
       senderPhotoUrl: _user!.photoURL!,
-      date: DateTime.now().toIso8601String(),
+      date: Timestamp.now(), //DateTime.now().toIso8601String(),
     );
 
     if (message != null) {
@@ -76,6 +83,10 @@ class _ChatPageState extends State<ChatPage> {
       FirebaseFirestore firebase = FirebaseFirestore.instance;
       firebase.collection('messages').add(messageData.toMap);
     }
+
+    setState(() {
+      _isSending = false;
+    });
   }
 
   @override
@@ -83,55 +94,71 @@ class _ChatPageState extends State<ChatPage> {
     return FutureBuilder(
       future: _googleAuthService.getUser().then((user) => _user = user),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Scaffold(
-            appBar: AppBar(
-              elevation: 1,
-              title: const Text('Chat'),
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('messages')
-                        .orderBy('date')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done ||
-                          snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        List<QueryDocumentSnapshot> docsList =
-                            snapshot.data!.docs.reversed.toList();
+        // if (snapshot.connectionState == ConnectionState.done) {
+        return Scaffold(
+          appBar: AppBar(
+            elevation: 1,
+            title: const Text('Chat'),
+            actions: [
+              _user != null
+                  ? IconButton(
+                      icon: const Icon(Icons.logout),
+                      onPressed: () {
+                        setState(() {
+                          FirebaseAuth.instance.signOut();
+                          _googleAuthService.signOut();
+                          _user = null;
+                        });
+                      },
+                    )
+                  : const SizedBox(),
+            ],
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('messages')
+                      .orderBy('date')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done ||
+                        snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      List<QueryDocumentSnapshot> docsList =
+                          snapshot.data!.docs.reversed.toList();
 
-                        return ListView.builder(
-                          itemCount: docsList.length,
-                          reverse: true,
-                          itemBuilder: (context, index) {
-                            MessageData msgData = MessageData.fromMap(
-                                docsList[index].data() as Map<String, dynamic>);
-                            return ChatMessage(
-                              messageData: msgData,
-                              userId: _user?.uid ?? '',
-                            );
-                          },
-                        );
-                      }
-                    },
-                  ),
+                      return ListView.builder(
+                        itemCount: docsList.length,
+                        reverse: true,
+                        itemBuilder: (context, index) {
+                          MessageData msgData = MessageData.fromMap(
+                              docsList[index].data() as Map<String, dynamic>);
+                          return ChatMessage(
+                            messageData: msgData,
+                            userId: _user?.uid ?? '',
+                          );
+                        },
+                      );
+                    }
+                  },
                 ),
-                TextComposer(sendMessage: _sendMessage),
-              ],
-            ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+              ),
+              _isSending
+                  ? const LinearProgressIndicator()
+                  : TextComposer(sendMessage: _sendMessage),
+            ],
+          ),
+        );
+        // } else {
+        //   return const Center(
+        //     child: CircularProgressIndicator(),
+        //   );
+        // }
       },
     );
   }
